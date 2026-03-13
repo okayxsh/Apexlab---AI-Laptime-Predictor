@@ -1,0 +1,110 @@
+{
+  "features": [
+    "track_length_km",
+    "corners",
+    "avg_speed_kph",
+    "downforce",
+    "power_hp",
+    "weight_kg",
+    "power_to_weight",
+    "category_enc",
+    "year"
+  ],
+  "car_specs": {
+    "Red Bull RB19": {
+      "power_hp": 1000,
+      "weight_kg": 798,
+      "category": "f1",
+      "drivetrain": "rwd"
+    },
+    "Ferrari SF-23": {
+      "power_hp": 980,
+      "weight_kg": 810,
+      "category": "f1",
+      "drivetrain": "rwd"
+    },
+    "Mercedes W14": {
+      "power_hp": 985,
+      "weight_kg": 805,
+      "category": "f1",
+      "drivetrain": "rwd"
+    },
+    "McLaren MCL60": {
+      "power_hp": 975,
+      "weight_kg": 807,
+      "category": "f1",
+      "drivetrain": "rwd"
+    },
+    "Alpine A523": {
+      "power_hp": 970,
+      "weight_kg": 812,
+      "category": "f1",
+      "drivetrain": "rwd"
+    },
+    "Porsche 911 GT3 R": {
+      "power_hp": 550,
+      "weight_kg": 1270,
+      "category": "gt3",
+      "drivetrain": "rwd"
+    },
+    "Ferrari 488 GT3": {
+      "power_hp": 600,
+      "weight_kg": 1245,
+      "category": "gt3",
+      "drivetrain": "rwd"
+    },
+    "Mercedes-AMG GT3": {
+      "power_hp": 585,
+      "weight_kg": 1320,
+      "category": "gt3",
+      "drivetrain": "rwd"
+    },
+    "Audi R8 LMS GT3": {
+      "power_hp": 585,
+      "weight_kg": 1280,
+      "category": "gt3",
+      "drivetrain": "rwd"
+    },
+    "BMW M4 GT3": {
+      "power_hp": 585,
+      "weight_kg": 1300,
+      "category": "gt3",
+      "drivetrain": "rwd"
+    },
+    "Porsche 718 Cayman GT4": {
+      "power_hp": 420,
+      "weight_kg": 1360,
+      "category": "gt4",
+      "drivetrain": "rwd"
+    },
+    "BMW M4 GT4": {
+      "power_hp": 430,
+      "weight_kg": 1410,
+      "category": "gt4",
+      "drivetrain": "rwd"
+    },
+    "Mercedes AMG GT4": {
+      "power_hp": 430,
+      "weight_kg": 1400,
+      "category": "gt4",
+      "drivetrain": "rwd"
+    },
+    "Aston Martin Vantage GT4": {
+      "power_hp": 430,
+      "weight_kg": 1430,
+      "category": "gt4",
+      "drivetrain": "rwd"
+    },
+    "Alpine A110 GT4": {
+      "power_hp": 420,
+      "weight_kg": 1325,
+      "category": "gt4",
+      "drivetrain": "rwd"
+    }
+  },
+  "category_encoding": {
+    "f1": 0,
+    "gt3": 1,
+    "gt4": 2
+  }
+}
