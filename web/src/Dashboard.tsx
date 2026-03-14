@@ -1,7 +1,7 @@
 import { motion, useInView } from 'motion/react';
 import { Play, Zap, Wind, Shield, ChevronRight } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import { predict, TRACKS, CARS } from './predictor';
+import { predict, TRACKS, CARS, getAsciiMap } from './predictor';
 import type { PredictionResult } from './predictor';
 
 /* ── Types ─────────────────────────────────── */
@@ -84,6 +84,50 @@ function SectionLabel({ text }: { text: string }) {
   );
 }
 
+/* ── ASCII Track Map ───────────────────────── */
+function AsciiMap({ trackId, trackName, category }: { trackId: string; trackName: string; category: string }) {
+  const map = getAsciiMap(trackId);
+  const td = TRACKS[category]?.find(t => t.id === trackId);
+
+  return (
+    <div className="border border-[--color-border] bg-[--color-surface-1] flex flex-col flex-1">
+      {/* Header */}
+      <div className="border-b border-[--color-border] px-5 py-3 flex items-center justify-between shrink-0">
+        <span className="font-mono text-[9px] tracking-[0.35em] text-zinc-600">CIRCUIT MAP</span>
+        <span className="font-mono text-[8px] tracking-[0.2em] text-zinc-700 uppercase truncate max-w-[200px]">
+          {trackName}
+        </span>
+      </div>
+
+      {/* ASCII art */}
+      <div className="flex-1 overflow-auto p-4 min-h-[300px]">
+        <pre
+          className="font-mono leading-[1.2] text-[--color-accent]/35
+                     hover:text-[--color-accent]/55 transition-colors duration-500
+                     whitespace-pre select-none"
+          style={{ fontSize: 'clamp(4px, 0.55vw, 6.5px)' }}
+        >
+          {map}
+        </pre>
+      </div>
+
+      {/* Track stats strip */}
+      <div className="border-t border-[--color-border] bg-[--color-surface-2] px-5 py-3 grid grid-cols-3 gap-4 shrink-0">
+        {[
+          ['LENGTH', td ? `${(td as any).length_km} km` : '—'],
+          ['CORNERS', td ? `${(td as any).corners ?? '—'}` : '—'],
+          ['SURFACE', td ? `${((td as any).surface ?? 'tarmac').toUpperCase()}` : '—'],
+        ].map(([k, v]) => (
+          <div key={k}>
+            <p className="font-mono text-[7px] tracking-[0.3em] text-zinc-700 mb-0.5">{k}</p>
+            <p className="font-mono text-[11px] text-zinc-400">{v}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ── Categories ────────────────────────────── */
 const CATEGORIES = [
   { id: 'f1', name: 'Formula 1' },
@@ -140,7 +184,6 @@ export default function Dashboard() {
     setResult(null);
     setError('');
 
-    // Small artificial delay so the loading animation is visible
     setTimeout(() => {
       const res = predict(category, track, car);
       if ('error' in res) {
@@ -181,9 +224,10 @@ export default function Dashboard() {
 
       <SectionLabel text="PREDICTION DASHBOARD" />
 
-      <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 max-w-6xl">
+      {/* ── 3-column grid ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_1fr] gap-6 max-w-7xl">
 
-        {/* ═══ LEFT — Config ════════════════════ */}
+        {/* ═══ COL 1 — Config ═══════════════════ */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
@@ -263,11 +307,24 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
-        {/* ═══ RIGHT — Output ═══════════════════ */}
+        {/* ═══ COL 2 — ASCII Track Map ══════════ */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col"
+        >
+          <div className="border border-[--color-border] bg-[--color-surface-1] p-5 mb-px shrink-0">
+            <span className="font-mono text-[9px] tracking-[0.35em] text-zinc-600">CIRCUIT OVERVIEW</span>
+          </div>
+          <AsciiMap trackId={track} trackName={trackName} category={category} />
+        </motion.div>
+
+        {/* ═══ COL 3 — Prediction Output ════════ */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col"
         >
           <div className="border border-[--color-border] bg-[--color-surface-1] px-6 py-5 mb-px flex items-center justify-between">
@@ -324,18 +381,18 @@ export default function Dashboard() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.4 }}
-                className="flex-1 flex flex-col p-8"
+                className="flex-1 flex flex-col p-6"
               >
-                <div className="mb-8">
-                  <p className="font-mono text-[8px] tracking-[0.4em] text-zinc-700 mb-4">
+                <div className="mb-6">
+                  <p className="font-mono text-[10px] tracking-[0.3em] text-zinc-400 mb-3">
                     {isRally ? 'PREDICTED STAGE TIME' : 'PREDICTED LAP TIME'}
                   </p>
                   <div className="flex items-end gap-2">
-                    <span className="font-display text-[clamp(4rem,10vw,7rem)] leading-none text-white tracking-wider">
+                    <span className="font-display text-[clamp(3rem,6vw,5rem)] leading-none text-white tracking-wider">
                       <TypedTime time={timeMain} delay={100} />
                     </span>
                     {timeDec && (
-                      <span className="font-display text-[clamp(2.5rem,6vw,4.5rem)] leading-none text-[--color-accent] tracking-wider mb-1">
+                      <span className="font-display text-[clamp(2rem,4vw,3.2rem)] leading-none text-[--color-accent] tracking-wider mb-1">
                         <TypedTime time={timeDec} delay={500} />
                       </span>
                     )}
@@ -344,10 +401,10 @@ export default function Dashboard() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1.2 }}
-                    className="flex items-center gap-3 mt-3"
+                    className="flex items-center gap-3 mt-2"
                   >
                     <div className="h-px w-6 bg-[--color-accent]/40" />
-                    <span className="font-mono text-[9px] tracking-[0.25em] text-zinc-600">
+                    <span className="font-mono text-[11px] tracking-[0.15em] text-zinc-300">
                       {carName} · {trackName} · Dry
                     </span>
                   </motion.div>
@@ -358,12 +415,12 @@ export default function Dashboard() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.4 }}
-                  className="grid grid-cols-3 gap-3 mb-8"
+                  className="grid grid-cols-3 gap-2 mb-5"
                 >
                   {sectors.map((s, i) => (
-                    <div key={s.label} className="border border-[--color-border] bg-[--color-surface-2] p-4">
-                      <p className="font-mono text-[8px] tracking-[0.3em] text-zinc-700 mb-2">{s.label}</p>
-                      <p className="font-mono text-lg font-semibold text-white tabular-nums mb-3">{s.time}</p>
+                    <div key={s.label} className="border border-[--color-border] bg-[--color-surface-2] p-3">
+                      <p className="font-mono text-[10px] tracking-[0.2em] text-zinc-400 mb-1.5">{s.label}</p>
+                      <p className="font-mono text-sm font-semibold text-white tabular-nums mb-2">{s.time}</p>
                       <div className="h-[2px] bg-[--color-surface-0]">
                         <motion.div
                           initial={{ width: 0 }}
@@ -388,11 +445,11 @@ export default function Dashboard() {
                     { icon: Wind, label: 'AVG SPEED', value: `${result.avg_speed_kmh} km/h` },
                     { icon: Shield, label: 'CONFIDENCE', value: result.confidence.split(' ')[0] },
                   ].map((s, i) => (
-                    <div key={s.label} className={`flex items-center gap-3 px-5 py-4 ${i < 2 ? 'border-r border-[--color-border]' : ''}`}>
-                      <s.icon size={13} className="text-[--color-accent]/60 shrink-0" />
+                    <div key={s.label} className={`flex items-center gap-2 px-4 py-3 ${i < 2 ? 'border-r border-[--color-border]' : ''}`}>
+                      <s.icon size={12} className="text-[--color-accent]/60 shrink-0" />
                       <div>
-                        <p className="font-mono text-[8px] tracking-[0.25em] text-zinc-700">{s.label}</p>
-                        <p className="font-mono text-[13px] text-white font-medium mt-0.5">{s.value}</p>
+                        <p className="font-mono text-[10px] tracking-[0.2em] text-zinc-400 mb-0.5">{s.label}</p>
+                        <p className="font-mono text-[13px] text-white font-semibold">{s.value}</p>
                       </div>
                     </div>
                   ))}
@@ -408,7 +465,7 @@ export default function Dashboard() {
         initial={{ opacity: 0, y: 12 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.5, delay: 0.5 }}
-        className="flex items-center gap-4 mt-8 max-w-6xl"
+        className="flex items-center gap-4 mt-8 max-w-7xl"
       >
         <span className="font-mono text-[8px] tracking-[0.35em] text-zinc-800 shrink-0">SUPPORTED CATEGORIES</span>
         <div className="h-px flex-1 bg-[--color-border]" />
