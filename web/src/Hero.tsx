@@ -1,9 +1,11 @@
-import { useRef } from 'react';
 import { motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
 import Dither from './components/Dither';
 
-interface HeroProps { onStart: () => void; }
+interface HeroProps {
+  onStart: () => void;
+  onAbout: () => void;
+}
 
 const STATS = [
   { value: '59', label: 'Circuits' },
@@ -12,7 +14,7 @@ const STATS = [
   { value: '94%', label: 'Accuracy' },
 ];
 
-export default function Hero({ onStart }: HeroProps) {
+export default function Hero({ onStart, onAbout }: HeroProps) {
   return (
     <section className="relative w-full h-screen flex flex-col overflow-hidden">
 
@@ -30,12 +32,11 @@ export default function Hero({ onStart }: HeroProps) {
         />
       </div>
 
-      {/* Dark gradient overlay — bottom fade so content reads */}
+      {/* Dark gradient overlay */}
       <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/40 via-transparent to-[--color-surface-0]" />
-      {/* Left vignette */}
       <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/60 via-transparent to-transparent" />
 
-      {/* ── Nav bar ─────────────────────────── */}
+      {/* ── Nav bar ── */}
       <motion.header
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -45,28 +46,33 @@ export default function Hero({ onStart }: HeroProps) {
         <div>
           <div className="flex items-center gap-2.5">
             <div className="w-2 h-2 rounded-full bg-[--color-accent] animate-glow" />
-            <span className="font-display text-2xl tracking-widest text-white">
-              APEXLAB
-            </span>
+            <span className="font-display text-2xl tracking-widest text-white">APEXLAB</span>
           </div>
           <p className="font-mono text-[9px] tracking-[0.4em] text-white/30 mt-0.5 ml-[26px]">
             LAP TIME PREDICTOR
           </p>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-8">
           {['F1', 'GT3', 'GT4', 'WRC'].map((cat) => (
             <span key={cat} className="font-mono text-[10px] tracking-[0.25em] text-white/40 hover:text-white/70 transition-colors cursor-default">
               {cat}
             </span>
           ))}
+          <div className="w-px h-4 bg-white/10" />
+          <button
+            onClick={onAbout}
+            className="font-mono text-[10px] tracking-[0.25em] text-white/40
+                       hover:text-white transition-colors duration-200 cursor-pointer"
+          >
+            ABOUT
+          </button>
         </div>
       </motion.header>
 
-      {/* ── Hero content ────────────────────── */}
+      {/* ── Hero content ── */}
       <div className="relative z-20 flex-1 flex flex-col justify-center px-8 md:px-14 pb-16">
 
-        {/* Badge */}
         <motion.div
           initial={{ opacity: 0, x: -16 }}
           animate={{ opacity: 1, x: 0 }}
@@ -79,7 +85,6 @@ export default function Hero({ onStart }: HeroProps) {
           </span>
         </motion.div>
 
-        {/* Main headline */}
         <div className="overflow-hidden mb-3">
           <motion.h1
             initial={{ y: 80 }}
@@ -102,7 +107,6 @@ export default function Hero({ onStart }: HeroProps) {
           </motion.h1>
         </div>
 
-        {/* Sub */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -114,7 +118,6 @@ export default function Hero({ onStart }: HeroProps) {
           F1, GT3, GT4 and WRC categories.
         </motion.p>
 
-        {/* CTA */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -141,7 +144,7 @@ export default function Hero({ onStart }: HeroProps) {
         </motion.div>
       </div>
 
-      {/* ── Stats strip — bottom ─────────────── */}
+      {/* ── Stats strip ── */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
