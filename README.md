@@ -1,7 +1,9 @@
 # 🏁 Laptime Predictor
 
+Visit this project deployed - https://apexlab.vercel.app/
+
 Predict lap times for F1, GT3, GT4, and Rally across real-world circuits.
-Runs in your terminal **and** deploys to Vercel as a web app.
+Runs in your terminal too!
 
 ---
 
